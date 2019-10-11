@@ -19,13 +19,20 @@ QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_S
 
 
 SOURCES += \
+        gauss_laguerre.cpp \
         gauss_legendre.cpp \
+        integration_function.cpp \
         main.cpp
 
 HEADERS += \
-        gauss_legendre.h
+        gauss_laguerre.h \
+        gauss_legendre.h \
+        integration_function.h
 s
 
 v
+
+DISTFILES += \
+    plot_lamda.py
 
 
