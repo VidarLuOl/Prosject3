@@ -8,6 +8,7 @@
 #define EPS 3.0e-14
 #define MAXIT 10
 #define   ZERO       1.0E-10
+#include "integration_function.h"
 
 using namespace std;
 
@@ -71,4 +72,24 @@ void gauleg(double x1, double x2, double x[], double w[], int n)
       *w_low      = 2.0 * xl/((1.0 - z * z) * pp * pp);
       *(w_high--) = *(w_low++);
    }
+}
+
+double gaulegcalc(double X[], double W[], int N, int alpha){
+    double gauss = 0;
+    for(int i1 = 0; i1 < N; i1++){
+        for(int i2 = 0; i2 < N; i2++){
+            for(int i3 = 0; i3 < N; i3++){
+                for(int i4 = 0; i4 < N; i4++){
+                    for(int i5 = 0; i5 < N; i5++){
+                        for(int i6 = 0; i6 < N; i6++){
+                            gauss += W[i1]*W[i2]*W[i3]*W[i4]*W[i5]*W[i6]
+                                    *integration_legendre(X[i1],X[i2],X[i3],X[i4],X[i5],X[i6], alpha);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return gauss;
 }

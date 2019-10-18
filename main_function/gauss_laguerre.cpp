@@ -7,8 +7,10 @@
 #include <cmath>
 #include <stdlib.h>
 #include <stdio.h>
+#include "mpi/mpi.h"
 #define EPS 3.0e-14
 #define MAXIT 10
+#include "integration_function.h"
 
 using namespace std;
 
@@ -19,9 +21,9 @@ double gammln(double);
 
 void gauss_laguerre(double *x, double *w, int n, double alf)
 {
-    int i,its,j;
+    int i, its, j;
     double ai;
-    double p1,p2,p3,pp,z,z1;
+    double p1, p2=0.0, p3, pp=0.0, z=0.0, z1;
 
     for (i=1;i<=n;i++) {
         if (i == 1) {
@@ -72,3 +74,25 @@ double gammln( double xx)
 // end function gammln
 #undef EPS
 #undef MAXIT
+
+
+double gaulagcalc(double X[], double W[], double theta_x[], double theta_w[], double phi_x[], double phi_w[], int N){
+    double gauss = 0;
+
+    for(int i1 = 1; i1 < N+1; i1++){
+        for(int i2 = 1; i2 < N+1; i2++){
+            for(int i3 = 0; i3 < N; i3++){
+                for(int i4 = 0; i4 < N; i4++){
+                    for(int i5 = 0; i5 < N; i5++){
+                        for(int i6 = 0; i6 < N; i6++){
+                            gauss += W[i1]*W[i2]*theta_w[i3]*theta_w[i4]*phi_w[i5]*phi_w[i6]
+                                    *integration_laguerre(X[i1], X[i2], theta_x[i3], theta_x[i4], phi_x[i5], phi_x[i6]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return gauss;
+}
+

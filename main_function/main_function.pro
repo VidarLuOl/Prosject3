@@ -22,12 +22,14 @@ SOURCES += \
         gauss_laguerre.cpp \
         gauss_legendre.cpp \
         integration_function.cpp \
-        main.cpp
+        main.cpp \
+        monte_carlo.cpp
 
 HEADERS += \
         gauss_laguerre.h \
         gauss_legendre.h \
-        integration_function.h
+        integration_function.h \
+        monte_carlo.h
 s
 
 v
