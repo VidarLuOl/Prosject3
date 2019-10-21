@@ -5,18 +5,21 @@
 #include "gauss_legendre.h"
 #include "gauss_laguerre.h"
 #include "integration_function.h"
+#include "monte_carlo.h"
 
 using namespace std;
 
 int main(int nargs, char *args[])
 {
-    double      const  pi = 3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609;
+    double      const  pi = 3.141592653589793;
     double lamda;
-    double gauss;
+    double gauss = 0;
+    double MC = 0;
     int N;
     int alpha = 2;
+    int my_rank = 0;
 
-    lamda = 2.8478437; N = 23;
+    lamda = 2.8478437; N = 19;
 
     double* X = new double[N+1]; //Value
     double* W = new double[N+1]; //Weight
@@ -27,39 +30,66 @@ int main(int nargs, char *args[])
     double* theta_w = new double[N];
     double* theta_x = new double[N];
 
+    auto start = chrono::high_resolution_clock::now();
 
+    // Opg.3a)
     /*
     gauleg(-lamda, lamda, X, W, N); //Gauss Legendre
-
     gauss = gaulegcalc(X, W, N, alpha); //Finding Gauss
     */
 
 
+    // Opg.3b)
+    /*
     gauleg(0, 2*pi, theta_x, theta_w, N);
     gauleg(0, pi, phi_x, phi_w, N);
     gauss_laguerre(X, W, N, alpha); //Gauss Laguerre
 
-    /*
-    int numprocs, my_rank;
+    gauss = gaulagcalc(X, W, theta_x, theta_w, phi_x, phi_w, N);
+    */
+
+
+    // Opg.3c)
+    //gauss = monte_carlo(2.3);
+
+    // Opg.3d) & 3e)
+
+    int numprocs;
     MPI_Init(&nargs, &args);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-    cout << my_rank << endl;
-    */
 
-    auto start = chrono::high_resolution_clock::now();
+    gauss = monte_carlo_improved(1000000);
+    //gauss = 4*pi*pi/(16*16);
 
-    gauss = gaulagcalc(X, W, theta_x, theta_w, phi_x, phi_w, N);
+    cout << "my_rank = " << my_rank << " Gauss = " << gauss << endl;
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    MPI_Reduce(&gauss, &MC, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+    MPI_Finalize();
+
 
 
     auto finish = chrono::high_resolution_clock::now();
 
+    if(my_rank == 0){
+        chrono::duration<double> elapsed = (finish - start);
+        cout << "Time = " << elapsed.count() << " s " << endl;
+        cout << MC  << endl;
+        cout << 5*pi*pi/(16*16) << endl;
+        cout << gauss - 5*pi*pi/(16*16) << endl;
 
-    chrono::duration<double> elapsed = (finish - start);
-    cout << "Time = " << elapsed.count() << " s " << endl;
-    cout << gauss  << endl;
-    cout << 5*pi*pi/(16*16) << endl;
-    cout << gauss - 5*pi*pi/(16*16) << endl;
+    }
+
+
+    delete [] X;
+    delete [] W;
+    delete [] phi_x;
+    delete [] phi_w;
+    delete [] theta_x;
+    delete [] theta_w;
 
     return 0;
 }

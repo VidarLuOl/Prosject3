@@ -24,7 +24,7 @@ double integration_laguerre(double r1, double r2, double theta1, double theta2, 
 
     double calculate = sqrt(r1*r1 + r2*r2 - 2.0*r1*r2*(cos(theta1)*cos(theta2) + sin(theta1)*sin(theta2)*cos(phi1-phi2)));
 
-    if(calculate < 1E-4){
+    if(calculate < 1E-10){
         return 0;
     }
     else{

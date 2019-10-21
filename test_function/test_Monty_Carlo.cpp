@@ -1,22 +1,18 @@
 #include "catch.hpp"
 #include "../main_function/gauss_legendre.h"
+#include "../main_function/gauss_laguerre.h"
 #include "../main_function/integration_function.h"
+#include "../main_function/monte_carlo.h"
+#include <random>
 
 using namespace std;
 
-TEST_CASE("Test gauss_legendre"){
+TEST_CASE("Test monte_carlo"){
     double      const  pi = 3.14159265359;
     double exact = 5*pi*pi/(16*16);
 
-    int N = 19;
-    int alpha = 2;
 
-    double* X = new double[N];
-    double* W = new double[N];
-
-    gauleg(-2.3, 2.3, X, W, 19);
-    double gauss = gaulegcalc(X, W, N, alpha);
-
+    double gauss = monte_carlo(2.3);
 
 
     REQUIRE(exact == Approx(gauss).epsilon(0.01));
