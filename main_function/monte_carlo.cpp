@@ -6,9 +6,7 @@
 
 using namespace std;
 
-double monte_carlo(double lambda){
-    int N = 10000000;
-
+double monte_carlo(double lambda, int N){
     // For å lage random tall mellom 0.0 - 1.0
     random_device rd;
     mt19937 gen(rd());

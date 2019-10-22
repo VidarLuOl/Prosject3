@@ -12,7 +12,7 @@ TEST_CASE("Test monte_carlo"){
     double exact = 5*pi*pi/(16*16);
 
 
-    double gauss = monte_carlo(2.3);
+    double gauss = monte_carlo(2.3, 1000000);
 
 
     REQUIRE(exact == Approx(gauss).epsilon(0.01));

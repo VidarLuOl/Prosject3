@@ -50,16 +50,15 @@ int main(int nargs, char *args[])
 
 
     // Opg.3c)
-    //gauss = monte_carlo(2.3);
-
-    // Opg.3d) & 3e)
-
+    N = 100000000;
     int numprocs;
     MPI_Init(&nargs, &args);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
-    gauss = monte_carlo_improved(1000000);
+    int NMPI = N/numprocs;
+
+    gauss = monte_carlo(2.3, NMPI);
     //gauss = 4*pi*pi/(16*16);
 
     cout << "my_rank = " << my_rank << " Gauss = " << gauss << endl;
@@ -70,16 +69,36 @@ int main(int nargs, char *args[])
 
     MPI_Finalize();
 
+    // Opg.3d) & 3e)
+    /*
+    int numprocs;
+    MPI_Init(&nargs, &args);
+    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+    gauss = monte_carlo_improved(10000000);
+    //gauss = 4*pi*pi/(16*16);
+
+    cout << "my_rank = " << my_rank << " Gauss = " << gauss << endl;
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    MPI_Reduce(&gauss, &MC, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+
+    MPI_Finalize();
+    */
 
 
     auto finish = chrono::high_resolution_clock::now();
 
     if(my_rank == 0){
+        MC = MC/numprocs;
+        gauss = gauss/numprocs;
         chrono::duration<double> elapsed = (finish - start);
         cout << "Time = " << elapsed.count() << " s " << endl;
         cout << MC  << endl;
         cout << 5*pi*pi/(16*16) << endl;
-        cout << gauss - 5*pi*pi/(16*16) << endl;
+        cout << MC - 5*pi*pi/(16*16) << endl;
 
     }
 
